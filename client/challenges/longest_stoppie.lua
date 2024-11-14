@@ -1,52 +1,49 @@
-using System;
-using System.Threading.Tasks;
-using CitizenFX.Core;
-using CitizenFX.Core.UI;
-using static CitizenFX.Core.Native.API;
-using WorldEventsM.Shared.Enum;
+local isActive = false
+local isStarted = false
+local longestStoppieDistance = 0.0
 
-namespace WorldEventsM.Client.Events
-{
-    public class LongestStoppie : IWorldEvent
-    {
-        public LongestStoppie(int id, string name, double countdownTime, double seconds) 
-            : base(id, name, countdownTime, seconds, false, "AMCH_STOPPIE", PlayerStats.LongestStoppieDistance, "m", PlayerStatType.Float)
-        {
-            Client.GetInstance().RegisterTickHandler(OnTick);
-        }
+function StartLongestStoppieChallenge()
+    isActive = true
+    isStarted = false
+    longestStoppieDistance = 0.0
+    TriggerEvent("chat:addMessage", {args = {"^2Event", "Find a motorcycle and prepare for the Longest Stoppie Challenge. Perform the longest stoppie!"}})
+    Citizen.CreateThread(OnTick)
+end
 
-        public override void OnEventActivated()
-        {
-            FirstStartedTick = true;
-            base.OnEventActivated();
-        }
+function EndLongestStoppieChallenge()
+    isActive = false
+    isStarted = false
+    longestStoppieDistance = 0.0
+    TriggerEvent("chat:addMessage", {args = {"^1Event", "Longest Stoppie Challenge has ended."}})
+end
 
-        private async Task OnTick()
-        {
-            try
-            {
-                if (!IsActive) return;
+function OnTick()
+    while isActive do
+        Citizen.Wait(50)
+        if not isStarted then
+            DrawSubtitle("Find a motorcycle and prepare for the Longest Stoppie Challenge. Perform the longest stoppie!")
+        else
+            local playerPed = PlayerPedId()
+            local vehicle = GetVehiclePedIsIn(playerPed, false)
 
-                if (!IsStarted)
-                {
-                    Screen.ShowSubtitle($"Find a motorcycle and prepare for the {Name} Challenge. Perform the longest stoppie!", 50);
-                }
-                else
-                {
-                    bool isPerformingStoppie = GetEntityPitch(Game.PlayerPed.CurrentVehicle.Handle) < -10f;
-                    if (isPerformingStoppie)
-                    {
-                        IncrementPlayerStat(PlayerStats.LongestStoppieDistance, 1.0f);
-                        Screen.ShowSubtitle(GetLabelText("AMCH_STOPPIE"), 50);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            if IsPedInAnyVehicle(playerPed, false) and GetEntityModel(vehicle) == GetHashKey("motorcycle") then
+                local isPerformingStoppie = GetEntityPitch(vehicle) < -10.0
+                if isPerformingStoppie then
+                    longestStoppieDistance = longestStoppieDistance + 1.0
+                    DrawSubtitle("Perform the longest stoppie!")
+                end
+            end
+        end
+    end
+end
 
-            await Task.FromResult(0);
-        }
-    }
-}
+-- Function to display subtitles on screen
+function DrawSubtitle(text)
+    SetTextEntry_2("STRING")
+    AddTextComponentString(text)
+    DrawSubtitleTimed(50, 1)
+end
+
+-- Event registration for starting and ending the challenge
+RegisterNetEvent("StartLongestStoppieChallenge", StartLongestStoppieChallenge)
+RegisterNetEvent("EndLongestStoppieChallenge", EndLongestStoppieChallenge)
