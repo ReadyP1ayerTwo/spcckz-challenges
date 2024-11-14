@@ -1,54 +1,52 @@
-using System;
-using System.Threading.Tasks;
-using CitizenFX.Core;
-using CitizenFX.Core.UI;
-using static CitizenFX.Core.Native.API;
-using WorldEventsM.Shared.Enum;
+local isActive = false
+local isStarted = false
+local invertedFlyingDistance = 0.0
 
-namespace WorldEventsM.Client.Events
-{
-    public class InvertedFlying : IWorldEvent
-    {
-        public InvertedFlying(int id, string name, double countdownTime, double seconds) 
-            : base(id, name, countdownTime, seconds, false, "AMCH_FLIP_0", PlayerStats.InvertedFlyingDistance, "m", PlayerStatType.Float)
-        {
-            Client.GetInstance().RegisterTickHandler(OnTick);
-        }
+function StartInvertedFlyingChallenge()
+    isActive = true
+    isStarted = false
+    invertedFlyingDistance = 0.0
+    TriggerEvent("chat:addMessage", {args = {"^2Event", "Find an aircraft and prepare for the Inverted Flying Challenge. Fly inverted!"}})
+    Citizen.CreateThread(OnTick)
+end
 
-        public override void OnEventActivated()
-        {
-            FirstStartedTick = true;
-            base.OnEventActivated();
-        }
+function EndInvertedFlyingChallenge()
+    isActive = false
+    isStarted = false
+    invertedFlyingDistance = 0.0
+    TriggerEvent("chat:addMessage", {args = {"^1Event", "Inverted Flying Challenge has ended."}})
+end
 
-        private async Task OnTick()
-        {
-            try
-            {
-                if (!IsActive) return;
+function OnTick()
+    while isActive do
+        Citizen.Wait(50)
+        if not isStarted then
+            DrawSubtitle("Find an aircraft and prepare for the Inverted Flying Challenge. Fly inverted!")
+        else
+            local playerPed = PlayerPedId()
+            local vehicle = GetVehiclePedIsIn(playerPed, false)
 
-                if (!IsStarted)
-                {
-                    Screen.ShowSubtitle($"Find an aircraft and prepare for the {Name} Challenge. Fly inverted!", 50);
-                }
-                else
-                {
-                    float altitude = GetEntityHeightAboveGround(Game.PlayerPed.CurrentVehicle.Handle);
-                    bool isUpsideDown = GetEntityRoll(Game.PlayerPed.CurrentVehicle.Handle) > 90f || GetEntityRoll(Game.PlayerPed.CurrentVehicle.Handle) < -90f;
+            if IsPedInAnyVehicle(playerPed, false) and IsThisModelAPlane(GetEntityModel(vehicle)) then
+                local altitude = GetEntityHeightAboveGround(vehicle)
+                local roll = GetEntityRoll(vehicle)
+                local isUpsideDown = roll > 90.0 or roll < -90.0
 
-                    if (altitude < 100f && isUpsideDown)
-                    {
-                        IncrementPlayerStat(PlayerStats.InvertedFlyingDistance, 1.0f);
-                        Screen.ShowSubtitle(GetLabelText("AMCH_FLIP_0"), 50);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+                if altitude < 100.0 and isUpsideDown then
+                    invertedFlyingDistance = invertedFlyingDistance + 1.0
+                    DrawSubtitle("Fly inverted and stay low!")
+                end
+            end
+        end
+    end
+end
 
-            await Task.FromResult(0);
-        }
-    }
-}
+-- Function to display subtitles on screen
+function DrawSubtitle(text)
+    SetTextEntry_2("STRING")
+    AddTextComponentString(text)
+    DrawSubtitleTimed(50, 1)
+end
+
+-- Event registration for starting and ending the challenge
+RegisterNetEvent("StartInvertedFlyingChallenge", StartInvertedFlyingChallenge)
+RegisterNetEvent("EndInvertedFlyingChallenge", EndInvertedFlyingChallenge)
