@@ -1,49 +1,49 @@
-using System;
-using System.Threading.Tasks;
-using CitizenFX.Core;
-using CitizenFX.Core.UI;
-using static CitizenFX.Core.Native.API;
-using WorldEventsM.Shared.Enum;
+local isActive = false
+local isStarted = false
+local npcCarDamage = 0.0
 
-namespace WorldEventsM.Client.Events
-{
-    public class ChaosChallenge : IWorldEvent
-    {
-        public ChaosChallenge(int id, string name, double countdownTime, double seconds) 
-            : base(id, name, countdownTime, seconds, false, "AMCH_CHAOS", PlayerStats.NPCCarDamage, "$", PlayerStatType.Float)
-        {
-            Client.GetInstance().RegisterTickHandler(OnTick);
-        }
+function StartChaosChallenge()
+    isActive = true
+    isStarted = false
+    npcCarDamage = 0.0
+    TriggerEvent("chat:addMessage", {args = {"^2Event", "Cause chaos and damage NPC vehicles in the Chaos Challenge!"}})
+    Citizen.CreateThread(OnTick)
+end
 
-        public override void OnEventActivated()
-        {
-            FirstStartedTick = true;
-            base.OnEventActivated();
-        }
+function EndChaosChallenge()
+    isActive = false
+    isStarted = false
+    npcCarDamage = 0.0
+    TriggerEvent("chat:addMessage", {args = {"^1Event", "Chaos Challenge has ended."}})
+end
 
-        private async Task OnTick()
-        {
-            try
-            {
-                if (!IsActive) return;
+function OnTick()
+    while isActive do
+        Citizen.Wait(50)
+        if not isStarted then
+            DrawSubtitle("Cause chaos and damage NPC vehicles in the Chaos Challenge!")
+        else
+            local playerPed = PlayerPedId()
+            local vehicle = GetVehiclePedIsIn(playerPed, false)
 
-                if (!IsStarted)
-                {
-                    Screen.ShowSubtitle($"Cause chaos and damage NPC vehicles in the {Name} Challenge!", 50);
-                }
-                else
-                {
-                    float damageDealt = GetEntityHealth(Game.PlayerPed.CurrentVehicle.Handle);
-                    IncrementPlayerStat(PlayerStats.NPCCarDamage, damageDealt);
-                    Screen.ShowSubtitle(GetLabelText("AMCH_CHAOS"), 50);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            if IsPedInAnyVehicle(playerPed, false) then
+                local currentHealth = GetEntityHealth(vehicle)
+                local damageDealt = 1000 - currentHealth  -- Assuming 1000 is max health
+                npcCarDamage = npcCarDamage + damageDealt
+                SetEntityHealth(vehicle, 1000)  -- Reset vehicle health to measure future damage dealt
+                DrawSubtitle("Cause as much chaos as possible! Damage NPC vehicles!")
+            end
+        end
+    end
+end
 
-            await Task.FromResult(0);
-        }
-    }
-}
+-- Function to display subtitles on screen
+function DrawSubtitle(text)
+    SetTextEntry_2("STRING")
+    AddTextComponentString(text)
+    DrawSubtitleTimed(50, 1)
+end
+
+-- Event registration for starting and ending the challenge
+RegisterNetEvent("StartChaosChallenge", StartChaosChallenge)
+RegisterNetEvent("EndChaosChallenge", EndChaosChallenge)
