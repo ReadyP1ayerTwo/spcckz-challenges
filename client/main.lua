@@ -6,7 +6,6 @@ local percentage = 1
 local current_cooldown = 0
 
 -- FORMATTING STUFF
-
 local ScreenCoords = {
     baseX = 0.918,
     baseY = 0.984,
@@ -26,23 +25,22 @@ local Sizes = {
     pbarHeight = 0.0205
 }
 
-local text = {
-    r = 80, g = 190, b = 80, a = 255,
+-- Colors for player text
+local players = {
+    player1 = { r = 227, g = 209, b = 96, a = 255 }, -- Player 1 text color
+    player2 = { r = 164, g = 164, b = 160, a = 255 }, -- Player 2 text color
+    player3 = { r = 219, g = 142, b = 91, a = 255 }  -- Player 3 text color
 }
 
+-- Sprite background for timer bars
 local sprite = {
-    r = 255, g = 255, b = 255, a = 190,
+    r = 255, g = 255, b = 255, a = 190 -- Timer bar background color
 }
 
-local percentbar = {
-    r1 = 255,
-    g1 = 255,
-    b1 = 255,
-    a1 = 255,
-    r2 = 40,
-    g2 = 175,
-    b2 = 95,
-    a2 = 255,
+-- Progress bar colors
+local progressBar = {
+    background = { r = 10, g = 10, b = 10, a = 175 }, -- Background color
+    foreground = { r = 93, g = 182, b = 229, a = 255 } -- Foreground (progress) color
 }
 
 local scoreboard = {
@@ -54,7 +52,7 @@ local scoreboard = {
 RegisterCommand("toggle_challenges", function()
     isParticipating = not isParticipating
     if isParticipating then
-        TriggerEvent("chat:addMessage", { args = { "~r~[mth-challenges]", "You will enter the next challenge !" } })
+        TriggerEvent("chat:addMessage", { args = { "~r~[mth-challenges]", "You will enter the next challenge!" } })
     else
         TriggerEvent("chat:addMessage", { args = { "~r~[mth-challenges]", "You are no longer participating in challenges" } })
         showScoreboard = false
@@ -108,7 +106,7 @@ function showResults(bestPlayer)
 
     BeginScaleformMovieMethod(scaleform, "SHOW_SHARD_WASTED_MP_MESSAGE")
     PushScaleformMovieMethodParameterString("~r~Challenge Results")
-    PushScaleformMovieMethodParameterString("~w~" .. bestPlayer[1].name .. " won the challenge with a score of ~g~" .. bestPlayer[1].score .. "~w~ !")
+    PushScaleformMovieMethodParameterString("~w~" .. bestPlayer[1].name .. " won the challenge with a score of ~g~" .. bestPlayer[1].score .. "~w~!")
     EndScaleformMovieMethod()
 
     PlaySoundFrontend(-1, "Mission_Pass_Notify", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS", 1)
@@ -131,11 +129,13 @@ function startScoreboard()
             displayScoreboard()
         end
     end)
-    -- do the timer countdown
+    -- Timer countdown
     Citizen.CreateThread(function()
         while showScoreboard do
             Citizen.Wait(current_cooldown / 100)
-            percentage = percentage - 0.01
+            if percentage > 0 then
+                percentage = percentage - 0.01
+            end
         end
     end)
 end
@@ -149,38 +149,56 @@ function displayScoreboard()
     local drawY2 = (ScreenCoords.baseY - safeZoneY) - (2 * Sizes.timerBarMargin)
     local drawY3 = (ScreenCoords.baseY - safeZoneY) - (1 * Sizes.timerBarMargin)
 
+    -- Draw timer bar backgrounds
     DrawSprite("timerbars", "all_black_bg", ScreenCoords.baseX - safeZoneX + 0.005, drawY1, Sizes.timerBarWidth, Sizes.timerBarHeight, 0, sprite.r, sprite.g, sprite.b, sprite.a)
     DrawSprite("timerbars", "all_black_bg", ScreenCoords.baseX - safeZoneX + 0.005, drawY2, Sizes.timerBarWidth, Sizes.timerBarHeight, 0, sprite.r, sprite.g, sprite.b, sprite.a)
     DrawSprite("timerbars", "all_black_bg", ScreenCoords.baseX - safeZoneX + 0.005, drawY3, Sizes.timerBarWidth, Sizes.timerBarHeight, 0, sprite.r, sprite.g, sprite.b, sprite.a)
 
-    AddTextEntry("player1", scoreboard[1].name .. " - " .. scoreboard[1].score)
-    AddTextEntry("player2", scoreboard[2].name .. " - " .. scoreboard[2].score)
-    AddTextEntry("player3", scoreboard[3].name .. " - " .. scoreboard[3].score)
+    -- Player 1
+    if scoreboard[1] then
+        local p1Color = players.player1
+        AddTextEntry("player1", (scoreboard[1].name or "Player 1") .. " - " .. (scoreboard[1].score or 0))
+        SetTextScale(1.0, 0.45)
+        SetTextColour(p1Color.r, p1Color.g, p1Color.b, p1Color.a)
+        SetTextCentre(true)
+        BeginTextCommandDisplayText("player1")
+        EndTextCommandDisplayText((ScreenCoords.baseX - safeZoneX) + ScreenCoords.titleOffsetX, drawY1 + ScreenCoords.valueOffsetY)
+    end
 
-    SetTextScale(1.0, 0.45)
-    SetTextColour(text.r, text.g, text.b, text.a)
-    SetTextCentre(true)
-    BeginTextCommandDisplayText("player1")
-    EndTextCommandDisplayText((ScreenCoords.baseX - safeZoneX) + ScreenCoords.titleOffsetX, drawY1 + ScreenCoords.valueOffsetY)
+    -- Player 2
+    if scoreboard[2] then
+        local p2Color = players.player2
+        AddTextEntry("player2", (scoreboard[2].name or "Player 2") .. " - " .. (scoreboard[2].score or 0))
+        SetTextScale(1.0, 0.45)
+        SetTextColour(p2Color.r, p2Color.g, p2Color.b, p2Color.a)
+        SetTextCentre(true)
+        BeginTextCommandDisplayText("player2")
+        EndTextCommandDisplayText((ScreenCoords.baseX - safeZoneX) + ScreenCoords.titleOffsetX, drawY2 + ScreenCoords.valueOffsetY)
+    end
 
-    SetTextScale(1.0, 0.45)
-    SetTextColour(text.r, text.g, text.b, text.a)
-    SetTextCentre(true)
-    BeginTextCommandDisplayText("player2")
-    EndTextCommandDisplayText((ScreenCoords.baseX - safeZoneX) + ScreenCoords.titleOffsetX, drawY2 + ScreenCoords.valueOffsetY)
+    -- Player 3
+    if scoreboard[3] then
+        local p3Color = players.player3
+        AddTextEntry("player3", (scoreboard[3].name or "Player 3") .. " - " .. (scoreboard[3].score or 0))
+        SetTextScale(1.0, 0.45)
+        SetTextColour(p3Color.r, p3Color.g, p3Color.b, p3Color.a)
+        SetTextCentre(true)
+        BeginTextCommandDisplayText("player3")
+        EndTextCommandDisplayText((ScreenCoords.baseX - safeZoneX) + ScreenCoords.titleOffsetX, drawY3 + ScreenCoords.valueOffsetY)
+    end
 
-    SetTextScale(1.0, 0.45)
-    SetTextColour(text.r, text.g, text.b, text.a)
-    SetTextCentre(true)
-    BeginTextCommandDisplayText("player3")
-    EndTextCommandDisplayText((ScreenCoords.baseX - safeZoneX) + ScreenCoords.titleOffsetX, drawY3 + ScreenCoords.valueOffsetY)
-
+    -- Progress Bar
     local pbarX = (ScreenCoords.baseX - safeZoneX) + ScreenCoords.pbarOffsetX
     local pbarY = (ScreenCoords.baseY - safeZoneY) + ScreenCoords.pbarOffsetY
     local width = Sizes.pbarWidth * percentage
 
-    DrawRect(pbarX, pbarY, Sizes.pbarWidth, Sizes.pbarHeight, percentbar.r1, percentbar.g1, percentbar.b1, percentbar.a1)
-    DrawRect((pbarX - Sizes.pbarWidth / 2) + width / 2, pbarY, width, Sizes.pbarHeight, percentbar.r2, percentbar.g2, percentbar.b2, percentbar.a2)
+    local bgColor = progressBar.background
+    local fgColor = progressBar.foreground
+
+    -- Background
+    DrawRect(pbarX, pbarY, Sizes.pbarWidth, Sizes.pbarHeight, bgColor.r, bgColor.g, bgColor.b, bgColor.a)
+    -- Foreground
+    DrawRect((pbarX - Sizes.pbarWidth / 2) + width / 2, pbarY, width, Sizes.pbarHeight, fgColor.r, fgColor.g, fgColor.b, fgColor.a)
 end
 
 function DrawInstruction(instruction)
@@ -192,9 +210,7 @@ end
 
 function startMissionScreen(title, instructions)
     inScaleform = true
-    -- SHOW SCALEFORM WITH INSTRUCTIONS
-    PlaySoundFrontend( -1, "FLIGHT_SCHOOL_LESSON_PASSED", "HUD_AWARDS")
-    -- scaleform to show big message to start the challenge.
+    PlaySoundFrontend(-1, "FLIGHT_SCHOOL_LESSON_PASSED", "HUD_AWARDS")
     local begin = GetGameTimer()
     local scaleform = RequestScaleformMovie("MP_BIG_MESSAGE_FREEMODE")
     while not HasScaleformMovieLoaded(scaleform) do
