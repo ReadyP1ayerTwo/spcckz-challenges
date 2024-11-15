@@ -13,6 +13,7 @@ AddEventHandler("onResourceStart", function (resourceName)
 end)
 
 function startEvent()
+    if inEvent then return end
     print("Starting event")
     -- Avoid the same event twice in a row.
     local nextEventId = math.random(#Challenges_list)
