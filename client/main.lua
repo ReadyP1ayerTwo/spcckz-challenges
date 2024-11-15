@@ -31,9 +31,9 @@ local players = {
     player3 = { r = 219, g = 142, b = 91, a = 255 }  -- Player 3 text color
 }
 
--- Sprite background for timer bars
+-- Sprite background for name
 local sprite = {
-    r = 255, g = 255, b = 255, a = 190 -- Timer bar background color
+    r = 10, g = 10, b = 10, a = 175 -- name bar background color
 }
 
 -- Progress bar colors
