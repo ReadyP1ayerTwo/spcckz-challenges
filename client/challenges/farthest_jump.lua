@@ -13,7 +13,7 @@ function StartFarthestJumpDistanceChallenge()
         while InChallenge do
             local _, currentJumpDistance = StatGetFloat(`MP0_LONGEST_JUMP_DISTANCE`, -1)
             currentJumpDistance = math.round(currentJumpDistance, 2)
-            if currentJumpDistance > farthestJumpDistance and IsParticipating then
+            if currentJumpDistance > farthestJumpDistance then
                 farthestJumpDistance = currentJumpDistance
             end
             Citizen.Wait(1000)

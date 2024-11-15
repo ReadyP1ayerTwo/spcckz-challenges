@@ -17,7 +17,7 @@ function StartLongestFreefallSurvivedChallenge()
         while InChallenge do
             local _, currentFreefall = StatGetFloat(`MP0_LONGEST_SURVIVED_FREEFALL`, -1)
             currentFreefall = math.round(currentFreefall, 2)
-            if currentFreefall > longestFreefallSurvived and IsParticipating then
+            if currentFreefall > longestFreefallSurvived then
                 longestFreefallSurvived = currentFreefall
                 TriggerServerEvent("mth-challenges:updateEvent", longestFreefallSurvived)
             end

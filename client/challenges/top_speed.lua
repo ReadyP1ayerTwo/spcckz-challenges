@@ -15,7 +15,7 @@ function StartFastestSpeedInCarChallenge()
                 if GetVehicleClass(vehicle) == 0 or GetVehicleClass(vehicle) == 1 then  -- Class 0: Compacts, Class 1: Sedans, etc.
                     local currentSpeed = GetEntitySpeed(vehicle) * 3.6  -- Convert from m/s to km/h
                     currentSpeed = math.round(currentSpeed, 2)
-                    if currentSpeed > fastestSpeedInCar and IsParticipating then
+                    if currentSpeed > fastestSpeedInCar then
                         fastestSpeedInCar = currentSpeed
                     end
                 end

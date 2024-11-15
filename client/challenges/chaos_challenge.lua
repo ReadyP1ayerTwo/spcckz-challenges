@@ -19,7 +19,6 @@ end
 function StartChaosChallenge()
     InChallenge = true
     npcCarDamage = 0.0
-    TriggerEvent("chat:addMessage", {args = {"^2Event", "Cause chaos and damage NPC vehicles in the Chaos Challenge!"}})
     Citizen.CreateThread(OnTick)
     Citizen.CreateThread(function()
         while InChallenge do

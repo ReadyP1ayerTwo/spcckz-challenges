@@ -13,7 +13,7 @@ function StartHeadShotsChallenge()
     Citizen.CreateThread(function()
         while InChallenge do
             local _, currentHeadshotsCount = StatGetInt(`mp0_headshots`, -1)
-            if currentHeadshotsCount - startingHeadshotsCount > headshotsCount and IsParticipating then
+            if currentHeadshotsCount - startingHeadshotsCount > headshotsCount then
                 headshotsCount = currentHeadshotsCount - startingHeadshotsCount
             end
             Citizen.Wait(1000)

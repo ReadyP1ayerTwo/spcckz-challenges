@@ -11,7 +11,7 @@ function StartMostKillsChallenge()
     Citizen.CreateThread(function()
         while InChallenge do
             local _, currentKillCount = StatGetInt(`MP0_KILLS`, -1)
-            if currentKillCount - startingKillCount > killCount and IsParticipating then
+            if currentKillCount - startingKillCount > killCount then
                 killCount = currentKillCount - startingKillCount
             end
             Citizen.Wait(1000)
