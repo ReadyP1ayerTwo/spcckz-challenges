@@ -1,5 +1,20 @@
 local longestWheelieDistance = 0.0
 
+local function OnTick()
+    while InChallenge do
+        Citizen.Wait(50)
+        local playerPed = PlayerPedId()
+        local vehicle = GetVehiclePedIsIn(playerPed, false)
+
+        if IsPedInAnyVehicle(playerPed, false) and GetVehicleClass(vehicle) == 8 then
+            local isPerformingWheelie = GetEntityPitch(vehicle) > 10.0
+            if isPerformingWheelie then
+                longestWheelieDistance = longestWheelieDistance + 1.0
+            end
+        end
+    end
+end
+
 function StartLongestWheelieChallenge()
     InChallenge = true
     longestWheelieDistance = 0.0
@@ -16,21 +31,6 @@ end
 function EndLongestWheelieChallenge()
     InChallenge = false
     longestWheelieDistance = 0.0
-end
-
-function OnTick()
-    while InChallenge do
-        Citizen.Wait(50)
-        local playerPed = PlayerPedId()
-        local vehicle = GetVehiclePedIsIn(playerPed, false)
-
-        if IsPedInAnyVehicle(playerPed, false) and GetVehicleClass(vehicle) == 8 then
-            local isPerformingWheelie = GetEntityPitch(vehicle) > 10.0
-            if isPerformingWheelie then
-                longestWheelieDistance = longestWheelieDistance + 1.0
-            end
-        end
-    end
 end
 
 RegisterNetEvent("StartLongestWheelieChallenge", StartLongestWheelieChallenge)

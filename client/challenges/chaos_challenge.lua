@@ -1,5 +1,21 @@
 local npcCarDamage = 0.0
 
+local function OnTick()
+    while InChallenge do
+        Citizen.Wait(50)
+        local playerPed = PlayerPedId()
+        local vehicle = GetVehiclePedIsIn(playerPed, false)
+
+        if IsPedInAnyVehicle(playerPed, false) then
+            local currentHealth = GetEntityHealth(vehicle)
+            local maxHealth = GetEntityMaxHealth(vehicle)
+            local damageDealt = maxHealth - currentHealth
+            npcCarDamage = npcCarDamage + damageDealt
+            SetEntityHealth(vehicle, maxHealth)
+        end
+    end
+end
+
 function StartChaosChallenge()
     InChallenge = true
     npcCarDamage = 0.0
@@ -17,22 +33,6 @@ end
 function EndChaosChallenge()
     InChallenge = false
     npcCarDamage = 0.0
-end
-
-function OnTick()
-    while InChallenge do
-        Citizen.Wait(50)
-        local playerPed = PlayerPedId()
-        local vehicle = GetVehiclePedIsIn(playerPed, false)
-
-        if IsPedInAnyVehicle(playerPed, false) then
-            local currentHealth = GetEntityHealth(vehicle)
-            local maxHealth = GetEntityMaxHealth(vehicle)
-            local damageDealt = maxHealth - currentHealth
-            npcCarDamage = npcCarDamage + damageDealt
-            SetEntityHealth(vehicle, maxHealth)
-        end
-    end
 end
 
 RegisterNetEvent("StartChaosChallenge", StartChaosChallenge)

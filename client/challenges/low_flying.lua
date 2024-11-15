@@ -1,5 +1,22 @@
 local lowFlyingDistance = 0.0
 
+local function OnTick()
+    while InChallenge do
+        Citizen.Wait(50)
+
+        local playerPed = PlayerPedId()
+        local vehicle = GetVehiclePedIsIn(playerPed, false)
+
+        if IsPedInAnyVehicle(playerPed, false) and IsThisModelAPlane(GetEntityModel(vehicle)) then
+            local altitude = GetEntityHeightAboveGround(vehicle)
+
+            if altitude < 50.0 then
+                lowFlyingDistance = lowFlyingDistance + 1.0
+            end
+        end
+    end
+end
+
 function StartLowFlyingChallenge()
     InChallenge = true
     lowFlyingDistance = 0.0
@@ -19,23 +36,6 @@ end
 function EndLowFlyingChallenge()
     InChallenge = false
     lowFlyingDistance = 0.0
-end
-
-function OnTick()
-    while InChallenge do
-        Citizen.Wait(50)
-
-        local playerPed = PlayerPedId()
-        local vehicle = GetVehiclePedIsIn(playerPed, false)
-
-        if IsPedInAnyVehicle(playerPed, false) and IsThisModelAPlane(GetEntityModel(vehicle)) then
-            local altitude = GetEntityHeightAboveGround(vehicle)
-
-            if altitude < 50.0 then
-                lowFlyingDistance = lowFlyingDistance + 1.0
-            end
-        end
-    end
 end
 
 RegisterNetEvent("StartLowFlyingChallenge", StartLowFlyingChallenge)
