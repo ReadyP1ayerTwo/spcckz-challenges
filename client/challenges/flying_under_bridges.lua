@@ -108,17 +108,10 @@ local activeBlips = {}
 function StartFlyingUnderBridgesChallenge()
     inChallenge = true
     ResetBridgeData()
-    SetStatInt("mp0_fly_under_bridges", 0)
-    
-    -- Display the mission start screen
-    startMissionScreen("Flying Under Bridges Challenge", "Find an air vehicle and fly under bridges.")
-    Wait(1000)
-    while inScaleform do
-        Wait(100)
-    end
-    startScoreboard()
+    StatSetInt("mp0_fly_under_bridges", 0, true)
 
-    -- Notify the player and spawn event vehicles
+    startMissionScreen("Flying Under Bridges Challenge", "Find an air vehicle and fly under bridges.")
+
     Citizen.CreateThread(function()
         NotifyPlayer("Air vehicles have been spotted all around Los Santos! Many ready for take-off at LSIA.")
         SpawnEventVehicles()
@@ -135,7 +128,6 @@ function StartFlyingUnderBridgesChallenge()
         end
     end)
 
-    -- Thread to monitor the challenge progress
     Citizen.CreateThread(function()
         while inChallenge do
             if IsPedInAnyPlane(PlayerPedId()) or IsPedInAnyHeli(PlayerPedId()) then
@@ -155,7 +147,7 @@ function StartFlyingUnderBridgesChallenge()
                                 IncrementStat("mp0_fly_under_bridges", 1)
 
                                 RemoveBlipFromBridge(bridge)
-                                
+
                                 PlaySoundFrontend(-1, distSquared < 25 and "CHECKPOINT_PERFECT" or "CHECKPOINT_NORMAL", "HUD_MINI_GAME_SOUNDSET", true)
                             end
                         end
@@ -166,10 +158,10 @@ function StartFlyingUnderBridgesChallenge()
         end
     end)
 
-    -- Thread to display instructions
     Citizen.CreateThread(function()
         while inChallenge do
             DrawInstruction("Fly under bridges to score points. Points will not be awarded twice for the same bridge.")
+            TriggerServerEvent("mth-challenges:updateEvent", StatGetInt(`mp0_fly_under_bridges`, -1))
             Citizen.Wait(500)
         end
     end)
@@ -215,7 +207,6 @@ function ClearActiveBlips()
     activeBlips = {}
 end
 
--- Helper functions
 function NotifyPlayer(message)
     BeginTextCommandThefeedPost("STRING")
     AddTextComponentSubstringPlayerName(message)
@@ -227,6 +218,5 @@ function IncrementStat(stat, value)
     StatSetInt(hash, StatGetInt(hash, -1) + value, true)
 end
 
--- Registering events to start and end the challenge
 RegisterNetEvent("StartFlyingUnderBridgesChallenge", StartFlyingUnderBridgesChallenge)
 RegisterNetEvent("EndFlyingUnderBridgesChallenge", EndFlyingUnderBridgesChallenge)

@@ -7,19 +7,15 @@ end
 function StartLongestFreefallSurvivedChallenge()
     inChallenge = true
     -- reset stat to 0
-    StatSetFloat(GetHashKey("MP0_LONGEST_SURVIVED_FREEFALL"), 0.0, true)
+    StatSetFloat(`MP0_LONGEST_SURVIVED_FREEFALL`, 0.0, true)
 
     startMissionScreen("Longest Freefall Survived Challenge", "Survive to the longest freefall")
-    Wait(1000)
-    while inScaleform do
-        Wait(100)
-    end
-    startScoreboard()
+
     Citizen.CreateThread(function()
         TriggerServerEvent("mth-challenges:updateEvent", longestFreefallSurvived)
 
         while inChallenge do
-            local _, currentFreefall = StatGetFloat(GetHashKey("MP0_LONGEST_SURVIVED_FREEFALL"), -1)
+            local _, currentFreefall = StatGetFloat(`MP0_LONGEST_SURVIVED_FREEFALL`, -1)
             currentFreefall = math.round(currentFreefall, 2)
             if currentFreefall > longestFreefallSurvived and isParticipating then
                 longestFreefallSurvived = currentFreefall

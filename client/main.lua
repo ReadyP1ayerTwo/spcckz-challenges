@@ -60,16 +60,14 @@ RegisterCommand("toggle_challenges", function()
     end
 end)
 
-RegisterNetEvent("mth-challenges:startEvent")
-AddEventHandler("mth-challenges:startEvent", function(event, cooldown)
+RegisterNetEvent("mth-challenges:startEvent", function(event, cooldown)
     if isParticipating then
         TriggerEvent(event)
         current_cooldown = cooldown
     end
 end)
 
-RegisterNetEvent("mth-challenges:endEvent")
-AddEventHandler("mth-challenges:endEvent", function(event, bestPlayer)
+RegisterNetEvent("mth-challenges:endEvent", function(event, bestPlayer)
     if isParticipating and inChallenge then
         showScoreboard = false
         percentage = 1
@@ -80,15 +78,13 @@ AddEventHandler("mth-challenges:endEvent", function(event, bestPlayer)
     end
 end)
 
-RegisterNetEvent("mth-challenges:updateScoreboard")
-AddEventHandler("mth-challenges:updateScoreboard", function(data, percentage_remaining)
+RegisterNetEvent("mth-challenges:updateScoreboard", function(data, percentage_remaining)
     if isParticipating and inChallenge then
         scoreboard = data
     end
 end)
 
-RegisterNetEvent("mth-challenges:updateTimer")
-AddEventHandler("mth-challenges:updateTimer", function(percentage_remaining)
+RegisterNetEvent("mth-challenges:updateTimer", function(percentage_remaining)
     if isParticipating and inChallenge then
         percentage = percentage_remaining / 100
     end
@@ -225,6 +221,8 @@ function startMissionScreen(title, instructions)
         DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255)
     end
     inScaleform = false
+    Wait(1000)
+    startScoreboard()
 end
 
 AddEventHandler('playerSpawned', function()

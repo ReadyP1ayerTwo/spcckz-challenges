@@ -46,8 +46,7 @@ function startEvent()
 end
 
 
-RegisterNetEvent("mth-challenges:updateEvent")
-AddEventHandler("mth-challenges:updateEvent", function (data)
+RegisterNetEvent("mth-challenges:updateEvent", function (data)
     if currentEvent == nil then
         return
     end
@@ -101,8 +100,7 @@ function stopEvent()
     inEvent = false
 end
 
-RegisterNetEvent("mth-challenges:playerConnected")
-AddEventHandler("mth-challenges:playerConnected", function()
+RegisterNetEvent("mth-challenges:playerConnected", function()
     if currentEvent ~= nil then
         TriggerClientEvent("mth-challenges:startEvent", source, currentEvent["start"], currentEvent["countdown"])
     end
