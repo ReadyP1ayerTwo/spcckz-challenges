@@ -1,3 +1,6 @@
+while not Challenges_list do
+    Wait(100)
+end
 local currentEvent = nil
 local inEvent = false
 local currentEventId = -1
