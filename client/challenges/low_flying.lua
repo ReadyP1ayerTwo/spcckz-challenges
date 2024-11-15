@@ -9,11 +9,11 @@ local function OnTick()
 
         if IsPedInAnyVehicle(playerPed, false) and IsThisModelAPlane(GetEntityModel(vehicle)) then
             local altitude = GetEntityHeightAboveGround(vehicle)
-            local isTouchingGround = IsVehicleOnAllWheels(vehicle)
+            local isAnyWheelTouchingGround = IsEntityInAir(vehicle) == false
 
-            -- Accumulate points only if flying low and not touching the ground
-            if altitude < 50.0 and not isTouchingGround then
-                lowFlyingDistance = lowFlyingDistance + 1.0
+            -- Accumulate points only if flying low, at least 5.0 above ground, and no wheels are touching
+            if altitude >= 5.0 and altitude < 50.0 and not isAnyWheelTouchingGround then
+                lowFlyingDistance = lowFlyingDistance + 5.0
             end
         end
     end
