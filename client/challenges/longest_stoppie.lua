@@ -18,6 +18,7 @@ end
 function StartLongestStoppieChallenge()
     InChallenge = true
     longestStoppieDistance = 0.0
+    StartMissionScreen("Longest Stoppie Challenge", "Perform the longest stoppie!")
     Citizen.CreateThread(OnTick)
     Citizen.CreateThread(function()
         while InChallenge do

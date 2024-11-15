@@ -18,6 +18,7 @@ end
 function StartLongestWheelieChallenge()
     InChallenge = true
     longestWheelieDistance = 0.0
+    StartMissionScreen("Longest Wheelie Challenge", "Perform the longest wheelie!")
     Citizen.CreateThread(OnTick)
     Citizen.CreateThread(function()
         while InChallenge do
