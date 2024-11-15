@@ -1,6 +1,3 @@
-while not Challenges_list do
-    Wait(100)
-end
 local currentEvent = nil
 local inEvent = false
 local currentEventId = -1
@@ -36,6 +33,10 @@ local function stopEvent()
 end
 
 local function startEvent()
+    if not Challenges_list or #Challenges_list == 0 then
+        print("No challenges found")
+        return
+    end
     if inEvent then return end
 
     local nextEventId = math.random(#Challenges_list)
