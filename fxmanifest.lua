@@ -11,7 +11,8 @@ shared_scripts {
 }
 
 client_scripts {
-    'client/**/*.lua',
+    'client/main.lua',
+    'client/challenges/*.lua',
 }
 
 server_scripts {
