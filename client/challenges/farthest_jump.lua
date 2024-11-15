@@ -1,19 +1,19 @@
 local farthestJumpDistance = 0.0
 
 function StartFarthestJumpDistanceChallenge()
-    inChallenge = true
+    InChallenge = true
     farthestJumpDistance = 0.0
 
     RemoveAllPedWeapons(PlayerPedId(), true)
 
-    startMissionScreen("Farthest Jump Distance Challenge", "Find a land vehicle and prepare for the challenge.")
+    StartMissionScreen("Farthest Jump Distance Challenge", "Find a land vehicle and prepare for the challenge.")
 
     Citizen.CreateThread(function()
 
-        while inChallenge do
+        while InChallenge do
             local _, currentJumpDistance = StatGetFloat(`MP0_LONGEST_JUMP_DISTANCE`, -1)
             currentJumpDistance = math.round(currentJumpDistance, 2)
-            if currentJumpDistance > farthestJumpDistance and isParticipating then
+            if currentJumpDistance > farthestJumpDistance and IsParticipating then
                 farthestJumpDistance = currentJumpDistance
             end
             Citizen.Wait(1000)
@@ -21,7 +21,7 @@ function StartFarthestJumpDistanceChallenge()
     end)
 
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Find a land vehicle and achieve the farthest jump distance.")
             TriggerServerEvent("mth-challenges:updateEvent", farthestJumpDistance)
             Citizen.Wait(500)
@@ -31,7 +31,7 @@ end
 
 function EndFarthestJumpDistanceChallenge()
     farthestJumpDistance = 0.0
-    inChallenge = false
+    InChallenge = false
     SetPlayerWantedLevel(PlayerId(), 0, false)
     SetPlayerWantedLevelNow(PlayerId(), false)
 end

@@ -1,12 +1,12 @@
 local npcCarDamage = 0.0
 
 function StartChaosChallenge()
-    inChallenge = true
+    InChallenge = true
     npcCarDamage = 0.0
     TriggerEvent("chat:addMessage", {args = {"^2Event", "Cause chaos and damage NPC vehicles in the Chaos Challenge!"}})
     Citizen.CreateThread(OnTick)
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Your objective is to cause as much damage to NPC vehicles as possible")
             TriggerServerEvent("mth-challenges:updateEvent", npcCarDamage)
             Citizen.Wait(500)
@@ -15,12 +15,12 @@ function StartChaosChallenge()
 end
 
 function EndChaosChallenge()
-    inChallenge = false
+    InChallenge = false
     npcCarDamage = 0.0
 end
 
 function OnTick()
-    while inChallenge do
+    while InChallenge do
         Citizen.Wait(50)
         local playerPed = PlayerPedId()
         local vehicle = GetVehiclePedIsIn(playerPed, false)

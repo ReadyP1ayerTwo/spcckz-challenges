@@ -1,14 +1,14 @@
 local lowFlyingDistance = 0.0
 
 function StartLowFlyingChallenge()
-    inChallenge = true
+    InChallenge = true
     lowFlyingDistance = 0.0
 
-    startMissionScreen("Low Flying Challenge", "Find an aircraft and fly low to the ground!")
+    StartMissionScreen("Low Flying Challenge", "Find an aircraft and fly low to the ground!")
 
     Citizen.CreateThread(OnTick)
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Your objective is to fly low and maintain altitude!")
             TriggerServerEvent("mth-challenges:updateEvent", lowFlyingDistance)
             Citizen.Wait(500)
@@ -17,12 +17,12 @@ function StartLowFlyingChallenge()
 end
 
 function EndLowFlyingChallenge()
-    inChallenge = false
+    InChallenge = false
     lowFlyingDistance = 0.0
 end
 
 function OnTick()
-    while inChallenge do
+    while InChallenge do
         Citizen.Wait(50)
 
         local playerPed = PlayerPedId()

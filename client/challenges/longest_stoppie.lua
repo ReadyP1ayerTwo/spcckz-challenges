@@ -1,11 +1,11 @@
 local longestStoppieDistance = 0.0
 
 function StartLongestStoppieChallenge()
-    inChallenge = true
+    InChallenge = true
     longestStoppieDistance = 0.0
     Citizen.CreateThread(OnTick)
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Your objective is to perform the longest stoppie!")
             TriggerServerEvent("mth-challenges:updateEvent", longestStoppieDistance)
             Citizen.Wait(500)
@@ -14,12 +14,12 @@ function StartLongestStoppieChallenge()
 end
 
 function EndLongestStoppieChallenge()
-    inChallenge = false
+    InChallenge = false
     longestStoppieDistance = 0.0
 end
 
 function OnTick()
-    while inChallenge do
+    while InChallenge do
         Citizen.Wait(50)
         local playerPed = PlayerPedId()
         local vehicle = GetVehiclePedIsIn(playerPed, false)

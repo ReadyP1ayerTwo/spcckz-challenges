@@ -106,11 +106,11 @@ local vehicleSpawnLocations = {
 local activeBlips = {}
 
 function StartFlyingUnderBridgesChallenge()
-    inChallenge = true
+    InChallenge = true
     ResetBridgeData()
     StatSetInt("mp0_fly_under_bridges", 0, true)
 
-    startMissionScreen("Flying Under Bridges Challenge", "Find an air vehicle and fly under bridges.")
+    StartMissionScreen("Flying Under Bridges Challenge", "Find an air vehicle and fly under bridges.")
 
     Citizen.CreateThread(function()
         NotifyPlayer("Air vehicles have been spotted all around Los Santos! Many ready for take-off at LSIA.")
@@ -129,7 +129,7 @@ function StartFlyingUnderBridgesChallenge()
     end)
 
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             if IsPedInAnyPlane(PlayerPedId()) or IsPedInAnyHeli(PlayerPedId()) then
                 local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
                 local playerPos = GetEntityCoords(vehicle)
@@ -159,7 +159,7 @@ function StartFlyingUnderBridgesChallenge()
     end)
 
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Fly under bridges to score points. Points will not be awarded twice for the same bridge.")
             TriggerServerEvent("mth-challenges:updateEvent", StatGetInt(`mp0_fly_under_bridges`, -1))
             Citizen.Wait(500)
@@ -168,7 +168,7 @@ function StartFlyingUnderBridgesChallenge()
 end
 
 function EndFlyingUnderBridgesChallenge()
-    inChallenge = false
+    InChallenge = false
     ClearActiveBlips()
 end
 

@@ -1,13 +1,13 @@
 local invertedFlyingDistance = 0.0
 
 function StartInvertedFlyingChallenge()
-    inChallenge = true
+    InChallenge = true
     invertedFlyingDistance = 0.0
-    startMissionScreen("Inverted Flying Challenge", "Find an aircraft and fly inverted!")
+    StartMissionScreen("Inverted Flying Challenge", "Find an aircraft and fly inverted!")
 
     Citizen.CreateThread(OnTick)
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Your objective is to fly inverted for as long as possible")
             TriggerServerEvent("mth-challenges:updateEvent", invertedFlyingDistance)
             Citizen.Wait(500)
@@ -17,11 +17,11 @@ end
 
 function EndInvertedFlyingChallenge()
     invertedFlyingDistance = 0.0
-    inChallenge = false
+    InChallenge = false
 end
 
 function OnTick()
-    while inChallenge do
+    while InChallenge do
         local playerPed = PlayerPedId()
         local vehicle = GetVehiclePedIsIn(playerPed, false)
 

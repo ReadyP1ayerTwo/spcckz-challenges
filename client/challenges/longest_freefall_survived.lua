@@ -5,19 +5,19 @@ function math.round(num, numDecimalPlaces)
 end
 
 function StartLongestFreefallSurvivedChallenge()
-    inChallenge = true
+    InChallenge = true
     -- reset stat to 0
     StatSetFloat(`MP0_LONGEST_SURVIVED_FREEFALL`, 0.0, true)
 
-    startMissionScreen("Longest Freefall Survived Challenge", "Survive to the longest freefall")
+    StartMissionScreen("Longest Freefall Survived Challenge", "Survive to the longest freefall")
 
     Citizen.CreateThread(function()
         TriggerServerEvent("mth-challenges:updateEvent", longestFreefallSurvived)
 
-        while inChallenge do
+        while InChallenge do
             local _, currentFreefall = StatGetFloat(`MP0_LONGEST_SURVIVED_FREEFALL`, -1)
             currentFreefall = math.round(currentFreefall, 2)
-            if currentFreefall > longestFreefallSurvived and isParticipating then
+            if currentFreefall > longestFreefallSurvived and IsParticipating then
                 longestFreefallSurvived = currentFreefall
                 TriggerServerEvent("mth-challenges:updateEvent", longestFreefallSurvived)
             end
@@ -26,7 +26,7 @@ function StartLongestFreefallSurvivedChallenge()
     end)
 
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Your objective is to survive to the longest freefall")
             Citizen.Wait(500)
         end
@@ -35,7 +35,7 @@ end
 
 function EndLongestFreefallSurvivedChallenge()
     longestFreefallSurvived = 0
-    inChallenge = false
+    InChallenge = false
 end
 
 RegisterNetEvent("StartLongestFreefallSurvivedChallenge", StartLongestFreefallSurvivedChallenge)

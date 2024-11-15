@@ -1,6 +1,5 @@
-isParticipating = true
-inScaleform = false
-inChallenge = false
+IsParticipating = true
+InChallenge = false
 local showScoreboard = false
 local percentage = 1
 local current_cooldown = 0
@@ -50,47 +49,17 @@ local scoreboard = {
 }
 
 RegisterCommand("toggle_challenges", function()
-    isParticipating = not isParticipating
-    if isParticipating then
+    IsParticipating = not IsParticipating
+    if IsParticipating then
         TriggerEvent("chat:addMessage", { args = { "~r~[mth-challenges]", "You will enter the next challenge!" } })
     else
         TriggerEvent("chat:addMessage", { args = { "~r~[mth-challenges]", "You are no longer participating in challenges" } })
         showScoreboard = false
-        inChallenge = false
+        InChallenge = false
     end
-end)
+end, false)
 
-RegisterNetEvent("mth-challenges:startEvent", function(event, cooldown)
-    if isParticipating then
-        TriggerEvent(event)
-        current_cooldown = cooldown
-    end
-end)
-
-RegisterNetEvent("mth-challenges:endEvent", function(event, bestPlayer)
-    if isParticipating and inChallenge then
-        showScoreboard = false
-        percentage = 1
-        if bestPlayer ~= nil and bestPlayer[1].score ~= 0 then
-            showResults(bestPlayer)
-        end
-        TriggerEvent(event)
-    end
-end)
-
-RegisterNetEvent("mth-challenges:updateScoreboard", function(data, percentage_remaining)
-    if isParticipating and inChallenge then
-        scoreboard = data
-    end
-end)
-
-RegisterNetEvent("mth-challenges:updateTimer", function(percentage_remaining)
-    if isParticipating and inChallenge then
-        percentage = percentage_remaining / 100
-    end
-end)
-
-function showResults(bestPlayer)
+local function showResults(bestPlayer)
     ClearPrints()
 
     local begin = GetGameTimer()
@@ -112,31 +81,7 @@ function showResults(bestPlayer)
     end
 end
 
-function startScoreboard()
-    showScoreboard = true
-
-    if not isParticipating then
-        return
-    end
-
-    Citizen.CreateThread(function()
-        while showScoreboard do
-            Citizen.Wait(0)
-            displayScoreboard()
-        end
-    end)
-    -- Timer countdown
-    Citizen.CreateThread(function()
-        while showScoreboard do
-            Citizen.Wait(current_cooldown / 100)
-            if percentage > 0 then
-                percentage = percentage - 0.01
-            end
-        end
-    end)
-end
-
-function displayScoreboard()
+local function displayScoreboard()
     local safeZone = GetSafeZoneSize()
     local safeZoneX = (1.0 - safeZone) * 0.5
     local safeZoneY = (1.0 - safeZone) * 0.5
@@ -197,6 +142,30 @@ function displayScoreboard()
     DrawRect((pbarX - Sizes.pbarWidth / 2) + width / 2, pbarY, width, Sizes.pbarHeight, fgColor.r, fgColor.g, fgColor.b, fgColor.a)
 end
 
+local function startScoreboard()
+    showScoreboard = true
+
+    if not IsParticipating then
+        return
+    end
+
+    Citizen.CreateThread(function()
+        while showScoreboard do
+            Citizen.Wait(0)
+            displayScoreboard()
+        end
+    end)
+    -- Timer countdown
+    Citizen.CreateThread(function()
+        while showScoreboard do
+            Citizen.Wait(current_cooldown / 100)
+            if percentage > 0 then
+                percentage = percentage - 0.01
+            end
+        end
+    end)
+end
+
 function DrawInstruction(instruction)
     AddTextEntry('mth-challenges:Subtitle', instruction)
     BeginTextCommandPrint('mth-challenges:Subtitle')
@@ -204,8 +173,7 @@ function DrawInstruction(instruction)
     EndTextCommandPrint(500, true)
 end
 
-function startMissionScreen(title, instructions)
-    inScaleform = true
+function StartMissionScreen(title, instructions)
     PlaySoundFrontend(-1, "FLIGHT_SCHOOL_LESSON_PASSED", "HUD_AWARDS")
     local begin = GetGameTimer()
     local scaleform = RequestScaleformMovie("MP_BIG_MESSAGE_FREEMODE")
@@ -220,13 +188,43 @@ function startMissionScreen(title, instructions)
         EndScaleformMovieMethod()
         DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255)
     end
-    inScaleform = false
     Wait(1000)
     startScoreboard()
 end
 
+RegisterNetEvent("mth-challenges:endEvent", function(event, bestPlayer)
+    if IsParticipating and InChallenge then
+        showScoreboard = false
+        percentage = 1
+        if bestPlayer ~= nil and bestPlayer[1].score ~= 0 then
+            showResults(bestPlayer)
+        end
+        TriggerEvent(event)
+    end
+end)
+
+RegisterNetEvent("mth-challenges:startEvent", function(event, cooldown)
+    if IsParticipating then
+        TriggerEvent(event)
+        current_cooldown = cooldown
+    end
+end)
+
+RegisterNetEvent("mth-challenges:updateScoreboard", function(data, percentage_remaining)
+    if IsParticipating and InChallenge then
+        scoreboard = data
+    end
+end)
+
+RegisterNetEvent("mth-challenges:updateTimer", function(percentage_remaining)
+    if IsParticipating and InChallenge then
+        percentage = percentage_remaining / 100
+    end
+end)
+
+
 AddEventHandler('playerSpawned', function()
-    if not isParticipating then
+    if not IsParticipating then
         return
     end
     Wait(5000)

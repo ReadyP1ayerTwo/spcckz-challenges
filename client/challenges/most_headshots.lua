@@ -4,16 +4,16 @@ function StartHeadShotsChallenge()
     -- This function is called when the challenge is started.
     -- We want to set the headshot count to 0 if it's not already 0.
     headshotsCount = 0
-    inChallenge = true
+    InChallenge = true
     -- Initialize the starting headshot count.
     local _, startingHeadshotsCount = StatGetInt(`mp0_headshots`, -1)
 
-    startMissionScreen("Headshots Challenge", "Get the most headshots")
+    StartMissionScreen("Headshots Challenge", "Get the most headshots")
 
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             local _, currentHeadshotsCount = StatGetInt(`mp0_headshots`, -1)
-            if currentHeadshotsCount - startingHeadshotsCount > headshotsCount and isParticipating then
+            if currentHeadshotsCount - startingHeadshotsCount > headshotsCount and IsParticipating then
                 headshotsCount = currentHeadshotsCount - startingHeadshotsCount
             end
             Citizen.Wait(1000)
@@ -21,7 +21,7 @@ function StartHeadShotsChallenge()
     end)
 
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Your objective is to get the most headshots")
             TriggerServerEvent("mth-challenges:updateEvent", headshotsCount)
             Citizen.Wait(500)
@@ -31,7 +31,7 @@ end
 
 function EndHeadShotsChallenge()
     headshotsCount = 0
-    inChallenge = false
+    InChallenge = false
 end
 
 RegisterNetEvent("StartHeadShotsChallenge", StartHeadShotsChallenge)

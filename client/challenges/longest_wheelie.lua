@@ -1,11 +1,11 @@
 local longestWheelieDistance = 0.0
 
 function StartLongestWheelieChallenge()
-    inChallenge = true
+    InChallenge = true
     longestWheelieDistance = 0.0
     Citizen.CreateThread(OnTick)
     Citizen.CreateThread(function()
-        while inChallenge do
+        while InChallenge do
             DrawInstruction("Your objective is to perform the longest wheelie!")
             TriggerServerEvent("mth-challenges:updateEvent", longestWheelieDistance)
             Citizen.Wait(500)
@@ -14,12 +14,12 @@ function StartLongestWheelieChallenge()
 end
 
 function EndLongestWheelieChallenge()
-    inChallenge = false
+    InChallenge = false
     longestWheelieDistance = 0.0
 end
 
 function OnTick()
-    while inChallenge do
+    while InChallenge do
         Citizen.Wait(50)
         local playerPed = PlayerPedId()
         local vehicle = GetVehiclePedIsIn(playerPed, false)
