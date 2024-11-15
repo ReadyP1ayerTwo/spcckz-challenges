@@ -51,8 +51,8 @@ Challenges_list = {
     },
     {
         ["name"] = "farthest_jump",
-        ["start"] = "StartFarthestJumpChallenge",
-        ["end"] = "EndFarthestJumpChallenge",
+        ["start"] = "StartFarthestJumpDistanceChallenge",
+        ["end"] = "EndFarthestJumpDistanceChallenge",
         ["countdown"] = 180000
     },
     {
@@ -69,8 +69,8 @@ Challenges_list = {
     -- },
     {
         ["name"] = "top_speed",
-        ["start"] = "StartTopSpeedChallenge",
-        ["end"] = "EndTopSpeedChallenge",
+        ["start"] = "StartFastestSpeedInCarChallenge",
+        ["end"] = "EndFastestSpeedInCarChallenge",
         ["countdown"] = 180000
     },
 }

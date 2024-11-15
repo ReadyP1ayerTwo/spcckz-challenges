@@ -39,6 +39,5 @@ function EndFastestSpeedInCarChallenge()
     InChallenge = false
 end
 
--- Registering events to start and end the challenge
 RegisterNetEvent("StartFastestSpeedInCarChallenge", StartFastestSpeedInCarChallenge)
 RegisterNetEvent("EndFastestSpeedInCarChallenge", EndFastestSpeedInCarChallenge)
