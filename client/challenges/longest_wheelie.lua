@@ -6,9 +6,16 @@ local function OnTick()
         local playerPed = PlayerPedId()
         local vehicle = GetVehiclePedIsIn(playerPed, false)
 
-        if IsPedInAnyVehicle(playerPed, false) and GetVehicleClass(vehicle) == 8 then
-            local isPerformingWheelie = GetEntityPitch(vehicle) > 10.0
-            if isPerformingWheelie then
+        if IsPedInAnyVehicle(playerPed, false) and GetVehicleClass(vehicle) == 8 then -- Only motorcycles
+            local isPerformingWheelie = GetEntityPitch(vehicle) > 10.0 -- Check if the vehicle is pitching up
+
+            -- Check if rear wheel(s) are touching the ground
+            local rearLeftWheel = GetEntityBoneIndexByName(vehicle, "wheel_lr")
+            local rearRightWheel = GetEntityBoneIndexByName(vehicle, "wheel_rr")
+            local rearLeftTouching = IsEntityInAir(vehicle) == false and rearLeftWheel ~= -1
+            local rearRightTouching = IsEntityInAir(vehicle) == false and rearRightWheel ~= -1
+
+            if isPerformingWheelie and (rearLeftTouching or rearRightTouching) then
                 longestWheelieDistance = longestWheelieDistance + 1.0
             end
         end
