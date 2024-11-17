@@ -76,5 +76,5 @@ Challenges_list = {
 }
 
 Config = {
-    cooldown = 30000, -- time to wait before starting a new challenge when the previous one is over
+    cooldown = 600000, -- time to wait before starting a new challenge when the previous one is over - changed to 10 minutes
 }
