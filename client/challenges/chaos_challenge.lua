@@ -4,7 +4,7 @@ function StartChaosChallenge()
     InChallenge = true
     vehiclesDestroyed = 0
 
-    StartMissionScreen("Chaos Challenge", "Destroy as many vehicles as possible!")
+    StartMissionScreen("Criminal Damage", "Destroy as many vehicles as possible!")
 
     -- Thread to track destroyed vehicles
     Citizen.CreateThread(function()
