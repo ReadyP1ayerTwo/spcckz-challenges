@@ -1,5 +1,3 @@
-local Config = {}
-
 -- Define zones with bottom-left and top-right corners for each case
 local underBridgeZones = {
     {bl = vector3(1063.774, -248.593, 56.13), tr = vector3(1093.589, -214.848, 66.68)}, -- Case 0
@@ -180,7 +178,8 @@ function EndFlyingUnderBridgesChallenge()
                         Citizen.Wait(2000) -- Repeat sound every 2 seconds
                     end
 
-                    AddExplosion(GetEntityCoords(vehicle), 2, 1.0, true, false, 1.0)
+                    local coords = GetEntityCoords(vehicle)
+                    AddExplosion(coords.x, coords.y, coords.z, 2, 1.0, true, false, 1.0)
                     DeleteEntity(vehicle)
                 end)
             end

@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-parameter
 IsParticipating = true
 InChallenge = false
 local showScoreboard = false
@@ -74,7 +75,7 @@ local function showResults(bestPlayer)
     PushScaleformMovieMethodParameterString("~w~" .. bestPlayer[1].name .. " won the challenge with a score of ~g~" .. bestPlayer[1].score .. "~w~!")
     EndScaleformMovieMethod()
 
-    PlaySoundFrontend(-1, "Mission_Pass_Notify", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS", 1)
+    PlaySoundFrontend(-1, "Mission_Pass_Notify", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS", true)
     while GetGameTimer() - begin < 5000 do
         Citizen.Wait(0)
         DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255)
