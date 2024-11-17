@@ -61,13 +61,13 @@ Challenges_list = {
         ["end"] = "EndFlyingUnderBridgesChallenge",
         ["countdown"] = 180000
     },
-    -- {
-    --     ["name"] = "near_miss",
-    --     ["start"] = "StartNearMissChallenge",
-    --     ["end"] = "EndNearMissChallenge",
-    --     ["countdown"] = 180000
-    -- },
     {
+        ["name"] = "near_miss",
+        ["start"] = "StartNearMissChallenge",
+        ["end"] = "EndNearMissChallenge",
+        ["countdown"] = 180000
+     },
+     {
         ["name"] = "top_speed",
         ["start"] = "StartFastestSpeedInCarChallenge",
         ["end"] = "EndFastestSpeedInCarChallenge",
