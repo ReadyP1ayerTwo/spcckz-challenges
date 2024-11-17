@@ -1,3 +1,6 @@
+-- Player's score variable
+local playerScore = 0
+
 -- Define zones with bottom-left and top-right corners for each case
 local underBridgeZones = {
     {bl = vector3(1063.774, -248.593, 56.13), tr = vector3(1093.589, -214.848, 66.68)}, -- Case 0
@@ -67,7 +70,7 @@ local underBridgeZones = {
     {bl = vector3(-1053.446, 4737.157, 204.49), tr = vector3(-1037.954, 4767.193, 234.43)}, -- Case 64
     {bl = vector3(1001.145, -987.114, 28.88), tr = vector3(1080.484, -963.744, 42.63)}, -- Case 67
     {bl = vector3(945.549, -847.662, 29.72), tr = vector3(1021.093, -835.978, 43.16)}, -- Case 68
-    {bl = vector3(1206.010, -1183.013, 32.43), tr = vector3(1267.189, -1157.063, 47.94)}, -- Case 69
+    {bl = vector3(1206.010, -1183.013, 32.43), tr = vector3(1267.189, -1157.063, 47.94)}, -- Case 69}
 }
 
 local vehicleSpawnLocations = {
@@ -106,15 +109,16 @@ local activeBlips = {}
 local spawnedAircraft = {}
 
 function StartFlyingUnderBridgesChallenge()
+    playerScore = 0 -- Initialize player's score
     InChallenge = true
     ResetBridgeData()
     StatSetInt("mp0_fly_under_bridges", 0, true)
 
-    StartMissionScreen("Flying Under Bridges Challenge", "Fly under bridges with an air vehicle or Oppressor Mk2!")
+    StartMissionScreen("Flying Under Bridges Challenge", "Fly under bridges with an aircraft or Oppressor Mk2!")
 
     Citizen.CreateThread(function()
         -- Notify and create blips
-        NotifyPlayer("Aircraft and Oppressors are ready! Check LSIA for available vehicles.")
+        NotifyPlayer("Aircrafts are ready! Check LSIA for available vehicles.")
         SpawnEventVehicles()
         for _, zone in pairs(underBridgeZones) do
             local center = CalculateZoneCenter(zone.bl, zone.tr)
@@ -138,10 +142,10 @@ function StartFlyingUnderBridgesChallenge()
                 for _, zone in pairs(underBridgeZones) do
                     if not zone.visited and IsPlayerInZone(playerPos, zone) then
                         zone.visited = true
+                        playerScore = playerScore + 1 -- Increment player's score
                         IncrementStat("mp0_fly_under_bridges", 1)
 
                         RemoveBlipFromZone(zone)
-
                         PlaySoundFrontend(-1, "CHECKPOINT_NORMAL", "HUD_MINI_GAME_SOUNDSET", true)
                     end
                 end
@@ -153,7 +157,7 @@ function StartFlyingUnderBridgesChallenge()
     Citizen.CreateThread(function()
         while InChallenge do
             DrawInstruction("Fly under bridges to score points. Points will not be awarded twice for the same bridge.")
-            TriggerServerEvent("mth-challenges:updateEvent", StatGetInt(`mp0_fly_under_bridges`, -1))
+            TriggerServerEvent("mth-challenges:updateEvent", playerScore) -- Send player's score to the server
             Citizen.Wait(500)
         end
     end)
