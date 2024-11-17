@@ -102,8 +102,8 @@ local vehicleSpawnLocations = {
     {x = 1077.437, y = 3011.685, z = 41.354, heading = 285.25, model = "lazer"},
     {x = 1732.836, y = 3305.026, z = 41.224, heading = 195.137, model = "stunt"}
 }
-
 local activeBlips = {}
+local spawnedAircraft = {}
 
 function StartFlyingUnderBridgesChallenge()
     InChallenge = true
@@ -116,6 +116,7 @@ function StartFlyingUnderBridgesChallenge()
         NotifyPlayer("Air vehicles have been spotted all around Los Santos! Many ready for take-off at LSIA.")
         SpawnEventVehicles()
 
+        -- Create blips for all bridge locations
         for _, bridge in pairs(underBridgeLocations) do
             local blip = AddBlipForCoord(bridge.x, bridge.y, bridge.z)
             SetBlipSprite(blip, 1)  -- Standard blip icon
@@ -134,7 +135,7 @@ function StartFlyingUnderBridgesChallenge()
                 local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
                 local playerPos = GetEntityCoords(vehicle)
 
-                for i, bridge in pairs(underBridgeLocations) do
+                for _, bridge in pairs(underBridgeLocations) do
                     if not bridge.visited then
                         local distSquared = #(vector3(bridge.x, bridge.y, bridge.z) - playerPos) ^ 2
 
@@ -170,6 +171,31 @@ end
 function EndFlyingUnderBridgesChallenge()
     InChallenge = false
     ClearActiveBlips()
+
+    Citizen.CreateThread(function()
+        -- Play warning sounds and self-destruct aircraft
+        for _, vehicle in ipairs(spawnedAircraft) do
+            if DoesEntityExist(vehicle) then
+                Citizen.CreateThread(function()
+                    local warningTime = 15000 -- 15 seconds before explosion
+                    local startTime = GetGameTimer()
+
+                    while GetGameTimer() - startTime < warningTime do
+                        local playerVehicle = GetVehiclePedIsIn(PlayerPedId(), false)
+                        if playerVehicle == vehicle then
+                            PlaySoundFrontend(-1, "CHECKPOINT_MISSED", "HUD_MINI_GAME_SOUNDSET", true)
+                        end
+                        Citizen.Wait(2000) -- Repeat sound every 2 seconds
+                    end
+
+                    -- Explode and delete the aircraft
+                    AddExplosion(GetEntityCoords(vehicle), 2, 1.0, true, false, 1.0)
+                    DeleteEntity(vehicle)
+                end)
+            end
+        end
+        spawnedAircraft = {} -- Clear spawned aircraft table
+    end)
 end
 
 function ResetBridgeData()
@@ -186,6 +212,7 @@ function SpawnEventVehicles()
         end
         local vehicle = CreateVehicle(GetHashKey(loc.model), loc.x, loc.y, loc.z, loc.heading, true, false)
         SetVehicleOnGroundProperly(vehicle)
+        table.insert(spawnedAircraft, vehicle) -- Track the spawned vehicle
     end
 end
 
