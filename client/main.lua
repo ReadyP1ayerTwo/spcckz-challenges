@@ -34,7 +34,9 @@ local players = {
 
 -- Sprite background for name
 local sprite = {
-    r = 10, g = 10, b = 10, a = 175 -- name bar background color
+    solidColor = { r = 10, g = 10, b = 10, a = 50 }, -- Left side solid color
+    fadeColor = { r = 10, g = 10, b = 10, a = 225 }, -- Right side faded color
+    fadeSteps = 60 -- Number of gradient steps (higher = smoother)
 }
 
 -- Progress bar colors
@@ -91,10 +93,30 @@ local function displayScoreboard()
     local drawY2 = (ScreenCoords.baseY - safeZoneY) - (2 * Sizes.timerBarMargin)
     local drawY3 = (ScreenCoords.baseY - safeZoneY) - (1 * Sizes.timerBarMargin)
 
-    -- Draw timer bar backgrounds
-    DrawSprite("timerbars", "all_black_bg", ScreenCoords.baseX - safeZoneX + 0.005, drawY1, Sizes.timerBarWidth, Sizes.timerBarHeight, 0, sprite.r, sprite.g, sprite.b, sprite.a)
-    DrawSprite("timerbars", "all_black_bg", ScreenCoords.baseX - safeZoneX + 0.005, drawY2, Sizes.timerBarWidth, Sizes.timerBarHeight, 0, sprite.r, sprite.g, sprite.b, sprite.a)
-    DrawSprite("timerbars", "all_black_bg", ScreenCoords.baseX - safeZoneX + 0.005, drawY3, Sizes.timerBarWidth, Sizes.timerBarHeight, 0, sprite.r, sprite.g, sprite.b, sprite.a)
+-- Function to draw a gradient background
+local function DrawGradientBackground(x, y, width, height, solidColor, fadeColor, steps)
+    local stepWidth = width / steps
+    for i = 0, steps - 1 do
+        -- Interpolate alpha for fading effect
+        local alpha = fadeColor.a + ((solidColor.a - fadeColor.a) / steps) * i
+        -- Use solid color for RGB (change if needed for RGB interpolation)
+        local color = {
+            r = solidColor.r,
+            g = solidColor.g,
+            b = solidColor.b,
+            a = math.floor(alpha) -- Ensure alpha is an integer
+        }
+        -- Calculate position for each gradient step
+        local stepX = x + (width / 2) - (i * stepWidth) - (stepWidth / 2)
+        -- Draw the rectangle for this gradient step
+        DrawRect(stepX, y, stepWidth, height, color.r, color.g, color.b, color.a)
+    end
+end
+
+-- Replace the DrawSprite calls with this gradient background
+DrawGradientBackground(ScreenCoords.baseX - safeZoneX + 0.005, drawY1, Sizes.timerBarWidth, Sizes.timerBarHeight, sprite.solidColor, sprite.fadeColor, sprite.fadeSteps)
+DrawGradientBackground(ScreenCoords.baseX - safeZoneX + 0.005, drawY2, Sizes.timerBarWidth, Sizes.timerBarHeight, sprite.solidColor, sprite.fadeColor, sprite.fadeSteps)
+DrawGradientBackground(ScreenCoords.baseX - safeZoneX + 0.005, drawY3, Sizes.timerBarWidth, Sizes.timerBarHeight, sprite.solidColor, sprite.fadeColor, sprite.fadeSteps)
 
     -- Player 1
     if scoreboard[1] then
